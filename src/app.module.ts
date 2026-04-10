@@ -5,11 +5,12 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { LoggerModule } from 'nestjs-pino';
 import configuration from './config/configuration';
 import { SharedModule } from './shared/shared.module';
-import { ExampleModule } from './app/example/example.module';
+import { ProjectModule } from './app/project/project.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: '.env.local',
       isGlobal: true,
       load: [configuration],
     }),
@@ -25,7 +26,7 @@ import { ExampleModule } from './app/example/example.module';
       autoSchemaFile: { federation: 2 },
     }),
     SharedModule,
-    ExampleModule,
+    ProjectModule,
   ],
 })
 export class AppModule {}
