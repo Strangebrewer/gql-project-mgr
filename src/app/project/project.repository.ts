@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Collection, Filter, FindOptions, ReturnDocument, UpdateFilter } from 'mongodb';
-import { PROJECT_COLLECTION } from './project.factory';
-import { ProjectEntity, ProjectEntityRead } from './project.entity';
+import { PROJECT_COLLECTION } from '../../common/factory/project.factory';
+import { ProjectEntity, ProjectEntityRead } from './models/project.entity';
 
 @Injectable()
 export class ProjectRepository {

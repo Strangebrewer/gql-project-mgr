@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { GraphQLError } from 'graphql';
 import { IdGeneratorService } from '../../shared/libs/id-generator/id-generator.service';
-import { ProjectEntity } from './project.entity';
-import { CreateProjectArgs, DeleteResult, Project, UpdateProjectArgs } from './project.model';
+import { DeleteResult } from '../../common/models/common.model';
+import { ProjectEntity } from './models/project.entity';
+import { CreateProjectArgs, Project, ProjectStatus, UpdateProjectArgs } from './models/project.model';
 import { ProjectRepository } from './project.repository';
 
 @Injectable()
@@ -55,7 +56,10 @@ export class ProjectService {
 function mapToModel(entity: ProjectEntity): Project {
   return {
     id: entity.id,
-    thing: entity.thing,
     userId: entity.userId,
+    name: entity.name,
+    description: entity.description,
+    status: entity.status as ProjectStatus,
+    dueDate: entity.dueDate,
   };
 }

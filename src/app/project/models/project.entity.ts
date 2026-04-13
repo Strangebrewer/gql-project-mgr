@@ -1,7 +1,10 @@
 export type ProjectEntity = {
   id: string;
-  thing: string;
   userId: string;
+  name: string;
+  description?: string;
+  status?: string;
+  dueDate?: string;
 };
 
 export type ProjectEntityRead = ProjectEntity & {

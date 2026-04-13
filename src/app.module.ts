@@ -6,6 +6,7 @@ import { LoggerModule } from 'nestjs-pino';
 import configuration from './config/configuration';
 import { SharedModule } from './shared/shared.module';
 import { ProjectModule } from './app/project/project.module';
+import { TaskModule } from './app/task/task.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ProjectModule } from './app/project/project.module';
     }),
     SharedModule,
     ProjectModule,
+    TaskModule,
   ],
 })
 export class AppModule {}

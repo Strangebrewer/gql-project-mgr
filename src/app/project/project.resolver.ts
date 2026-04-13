@@ -1,7 +1,8 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { JwtAccessGuard, JwtUserId } from '../../common/guards/jwt-access.guard';
-import { CreateProjectArgs, DeleteResult, Project, UpdateProjectArgs } from './project.model';
+import { DeleteResult } from '../../common/models/common.model';
+import { CreateProjectArgs, Project, UpdateProjectArgs } from './models/project.model';
 import { ProjectService } from './project.service';
 
 @Resolver(() => Project)

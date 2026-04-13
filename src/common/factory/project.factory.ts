@@ -2,7 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { DatabaseConfig } from '../../config/database';
 import { Collection, Db } from 'mongodb';
 import { DB_CLIENT } from '../../shared/mongo/mongo.module';
-import { ProjectEntity } from './project.entity';
+import { ProjectEntity } from '../../app/project/models/project.entity';
 
 export const PROJECT_COLLECTION = 'PROJECT_COLLECTION';
 
