@@ -4,7 +4,6 @@ import { Db, MongoClient } from 'mongodb';
 import { TASK_COLLECTION } from '../src/common/factory/task.factory';
 import { TaskRepository } from '../src/app/task/task.repository';
 import { TaskService } from '../src/app/task/task.service';
-import { IdGeneratorService } from '../src/shared/libs/id-generator/id-generator.service';
 import { TaskStatus } from '../src/app/task/models/task.model';
 
 describe('Task (integration)', () => {
@@ -24,7 +23,6 @@ describe('Task (integration)', () => {
         { provide: TASK_COLLECTION, useValue: db.collection('tasks') },
         TaskRepository,
         TaskService,
-        IdGeneratorService,
       ],
     }).compile();
 
@@ -45,7 +43,7 @@ describe('Task (integration)', () => {
     const userId = 'user-1';
     const created = await service.create(
       {
-        projectId: 'PRJ-abc',
+        projectId: 'project-abc',
         name: 'Design the schema',
         description: 'Plan out the MongoDB collections',
         status: TaskStatus.IN_PROGRESS,
@@ -54,8 +52,8 @@ describe('Task (integration)', () => {
       userId,
     );
 
-    expect(created.id).toMatch(/^TSK-/);
-    expect(created.projectId).toBe('PRJ-abc');
+    expect(created.id).toBeDefined();
+    expect(created.projectId).toBe('project-abc');
     expect(created.name).toBe('Design the schema');
     expect(created.description).toBe('Plan out the MongoDB collections');
     expect(created.status).toBe(TaskStatus.IN_PROGRESS);
@@ -67,9 +65,9 @@ describe('Task (integration)', () => {
   });
 
   it('creates a task with only required fields', async () => {
-    const created = await service.create({ projectId: 'PRJ-abc', name: 'Minimal task' }, 'user-1');
+    const created = await service.create({ projectId: 'project-abc', name: 'Minimal task' }, 'user-1');
 
-    expect(created.id).toMatch(/^TSK-/);
+    expect(created.id).toBeDefined();
     expect(created.name).toBe('Minimal task');
     expect(created.description).toBeUndefined();
     expect(created.status).toBeUndefined();
@@ -77,16 +75,16 @@ describe('Task (integration)', () => {
   });
 
   it('finds all tasks for a project', async () => {
-    await service.create({ projectId: 'PRJ-1', name: 'Task A' }, 'user-1');
-    await service.create({ projectId: 'PRJ-1', name: 'Task B' }, 'user-1');
-    await service.create({ projectId: 'PRJ-2', name: 'Task C' }, 'user-1');
+    await service.create({ projectId: 'project-1', name: 'Task A' }, 'user-1');
+    await service.create({ projectId: 'project-1', name: 'Task B' }, 'user-1');
+    await service.create({ projectId: 'project-2', name: 'Task C' }, 'user-1');
 
-    const results = await service.findByProject('PRJ-1');
+    const results = await service.findByProject('project-1');
     expect(results).toHaveLength(2);
   });
 
   it('updates a task', async () => {
-    const created = await service.create({ projectId: 'PRJ-abc', name: 'Original' }, 'user-1');
+    const created = await service.create({ projectId: 'project-abc', name: 'Original' }, 'user-1');
 
     const updated = await service.update(created.id, {
       name: 'Updated',
@@ -95,11 +93,11 @@ describe('Task (integration)', () => {
 
     expect(updated.name).toBe('Updated');
     expect(updated.status).toBe(TaskStatus.DONE);
-    expect(updated.projectId).toBe('PRJ-abc');
+    expect(updated.projectId).toBe('project-abc');
   });
 
   it('deletes a task', async () => {
-    const created = await service.create({ projectId: 'PRJ-abc', name: 'To Delete' }, 'user-1');
+    const created = await service.create({ projectId: 'project-abc', name: 'To Delete' }, 'user-1');
     const result = await service.delete(created.id);
     expect(result.deletedCount).toBe(1);
   });

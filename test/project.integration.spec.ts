@@ -4,7 +4,6 @@ import { Db, MongoClient } from 'mongodb';
 import { PROJECT_COLLECTION } from '../src/common/factory/project.factory';
 import { ProjectRepository } from '../src/app/project/project.repository';
 import { ProjectService } from '../src/app/project/project.service';
-import { IdGeneratorService } from '../src/shared/libs/id-generator/id-generator.service';
 import { ProjectStatus } from '../src/app/project/models/project.model';
 
 describe('Project (integration)', () => {
@@ -24,7 +23,6 @@ describe('Project (integration)', () => {
         { provide: PROJECT_COLLECTION, useValue: db.collection('projects') },
         ProjectRepository,
         ProjectService,
-        IdGeneratorService,
       ],
     }).compile();
 
@@ -53,7 +51,7 @@ describe('Project (integration)', () => {
       userId,
     );
 
-    expect(created.id).toMatch(/^PRJ-/);
+    expect(created.id).toBeDefined();
     expect(created.name).toBe('Build Portfolio Site');
     expect(created.description).toBe('A full-stack portfolio project');
     expect(created.status).toBe(ProjectStatus.IN_PROGRESS);
@@ -67,7 +65,7 @@ describe('Project (integration)', () => {
   it('creates a project with only required fields', async () => {
     const created = await service.create({ name: 'Minimal Project' }, 'user-1');
 
-    expect(created.id).toMatch(/^PRJ-/);
+    expect(created.id).toBeDefined();
     expect(created.name).toBe('Minimal Project');
     expect(created.description).toBeUndefined();
     expect(created.status).toBeUndefined();

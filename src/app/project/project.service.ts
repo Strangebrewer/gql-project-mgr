@@ -1,6 +1,6 @@
+import { randomUUID } from 'crypto';
 import { Injectable } from '@nestjs/common';
 import { GraphQLError } from 'graphql';
-import { IdGeneratorService } from '../../shared/libs/id-generator/id-generator.service';
 import { DeleteResult } from '../../common/models/common.model';
 import { ProjectEntity } from './models/project.entity';
 import { CreateProjectArgs, Project, ProjectStatus, UpdateProjectArgs } from './models/project.model';
@@ -8,10 +8,7 @@ import { ProjectRepository } from './project.repository';
 
 @Injectable()
 export class ProjectService {
-  constructor(
-    private readonly projectRepository: ProjectRepository,
-    private readonly idGenerator: IdGeneratorService,
-  ) {}
+  constructor(private readonly projectRepository: ProjectRepository) {}
 
   async findById(id: string): Promise<Project> {
     const record = await this.projectRepository.findById(id);
@@ -32,7 +29,7 @@ export class ProjectService {
     const entity: ProjectEntity = {
       ...args,
       userId,
-      id: this.idGenerator.generate('PRJ'),
+      _id: randomUUID(),
     };
     const record = await this.projectRepository.create(entity);
     return mapToModel(record);
@@ -55,7 +52,7 @@ export class ProjectService {
 
 function mapToModel(entity: ProjectEntity): Project {
   return {
-    id: entity.id,
+    id: entity._id,
     userId: entity.userId,
     name: entity.name,
     description: entity.description,
