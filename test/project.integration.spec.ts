@@ -4,6 +4,7 @@ import { Db, MongoClient } from 'mongodb';
 import { PROJECT_COLLECTION } from '../src/common/factory/project.factory';
 import { ProjectRepository } from '../src/app/project/project.repository';
 import { ProjectService } from '../src/app/project/project.service';
+import { TRACER_CLIENT } from '../src/shared/tracer/tracer.module';
 import { ProjectStatus } from '../src/app/project/models/project.model';
 
 describe('Project (integration)', () => {
@@ -21,6 +22,7 @@ describe('Project (integration)', () => {
     module = await Test.createTestingModule({
       providers: [
         { provide: PROJECT_COLLECTION, useValue: db.collection('projects') },
+        { provide: TRACER_CLIENT, useValue: { send: jest.fn(), sendSpan: jest.fn(), sendErrorSpan: jest.fn() } },
         ProjectRepository,
         ProjectService,
       ],

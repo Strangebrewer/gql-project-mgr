@@ -4,6 +4,7 @@ import { Db, MongoClient } from 'mongodb';
 import { TASK_COLLECTION } from '../src/common/factory/task.factory';
 import { TaskRepository } from '../src/app/task/task.repository';
 import { TaskService } from '../src/app/task/task.service';
+import { TRACER_CLIENT } from '../src/shared/tracer/tracer.module';
 import { TaskStatus } from '../src/app/task/models/task.model';
 
 describe('Task (integration)', () => {
@@ -21,6 +22,7 @@ describe('Task (integration)', () => {
     module = await Test.createTestingModule({
       providers: [
         { provide: TASK_COLLECTION, useValue: db.collection('tasks') },
+        { provide: TRACER_CLIENT, useValue: { send: jest.fn(), sendSpan: jest.fn(), sendErrorSpan: jest.fn() } },
         TaskRepository,
         TaskService,
       ],
