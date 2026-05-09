@@ -5,7 +5,7 @@ export type TracerConfig = {
 };
 
 export default (): TracerConfig => ({
-  url: process.env.TRACER_URL || '',
-  serviceKey: process.env.SERVICE_KEY || '',
+  url: process.env.TRACER_SERVICE_URL || '',
+  serviceKey: process.env.TRACER_SERVICE_KEY || '',
   service: process.env.SERVICE || 'gql-project-mgr',
 });
