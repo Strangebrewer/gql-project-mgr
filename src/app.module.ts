@@ -20,7 +20,15 @@ import { TraceInterceptor } from './common/interceptors/trace.interceptor';
     LoggerModule.forRoot({
       pinoHttp: {
         autoLogging: false,
-        transport: process.env.NODE_ENV !== 'production' ? { target: 'pino-pretty' } : undefined,
+        level: 'info',
+        stream: {
+          write(msg: string) {
+            const entry = JSON.parse(msg);
+            const internal = ['InstanceLoader', 'NestFactory', 'RouterExplorer', 'RoutesResolver', 'NestApplication', 'GraphQLModule', 'AppModule'];
+            if (internal.includes(entry.context)) return;
+            process.stdout.write(msg);
+          },
+        },
       },
     }),
     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
