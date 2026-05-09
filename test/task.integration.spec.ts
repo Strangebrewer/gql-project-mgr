@@ -4,7 +4,6 @@ import { Db, MongoClient } from 'mongodb';
 import { TASK_COLLECTION } from '../src/common/factory/task.factory';
 import { TaskRepository } from '../src/app/task/task.repository';
 import { TaskService } from '../src/app/task/task.service';
-import { TRACER_CLIENT } from '../src/shared/tracer/tracer.module';
 import { TaskStatus } from '../src/app/task/models/task.model';
 
 describe('Task (integration)', () => {
@@ -22,7 +21,6 @@ describe('Task (integration)', () => {
     module = await Test.createTestingModule({
       providers: [
         { provide: TASK_COLLECTION, useValue: db.collection('tasks') },
-        { provide: TRACER_CLIENT, useValue: { send: jest.fn(), sendSpan: jest.fn(), sendErrorSpan: jest.fn() } },
         TaskRepository,
         TaskService,
       ],
@@ -45,7 +43,7 @@ describe('Task (integration)', () => {
     const userId = 'user-1';
     const created = await service.create(
       {
-        id: 'project-abc',
+        projectId: 'project-abc',
         name: 'Design the schema',
         description: 'Plan out the MongoDB collections',
         status: TaskStatus.IN_PROGRESS,
@@ -67,7 +65,7 @@ describe('Task (integration)', () => {
   });
 
   it('creates a task with only required fields', async () => {
-    const created = await service.create({ id: 'project-abc', name: 'Minimal task' }, 'user-1');
+    const created = await service.create({ projectId: 'project-abc', name: 'Minimal task' }, 'user-1');
 
     expect(created.id).toBeDefined();
     expect(created.name).toBe('Minimal task');
@@ -77,16 +75,16 @@ describe('Task (integration)', () => {
   });
 
   it('finds all tasks for a project', async () => {
-    await service.create({ id: 'project-1', name: 'Task A' }, 'user-1');
-    await service.create({ id: 'project-1', name: 'Task B' }, 'user-1');
-    await service.create({ id: 'project-2', name: 'Task C' }, 'user-1');
+    await service.create({ projectId: 'project-1', name: 'Task A' }, 'user-1');
+    await service.create({ projectId: 'project-1', name: 'Task B' }, 'user-1');
+    await service.create({ projectId: 'project-2', name: 'Task C' }, 'user-1');
 
     const results = await service.findByProject('project-1');
     expect(results).toHaveLength(2);
   });
 
   it('updates a task', async () => {
-    const created = await service.create({ id: 'project-abc', name: 'Original' }, 'user-1');
+    const created = await service.create({ projectId: 'project-abc', name: 'Original' }, 'user-1');
 
     const updated = await service.update(created.id, {
       name: 'Updated',
@@ -99,7 +97,7 @@ describe('Task (integration)', () => {
   });
 
   it('deletes a task', async () => {
-    const created = await service.create({ id: 'project-abc', name: 'To Delete' }, 'user-1');
+    const created = await service.create({ projectId: 'project-abc', name: 'To Delete' }, 'user-1');
     const result = await service.delete(created.id);
     expect(result.deletedCount).toBe(1);
   });

@@ -26,10 +26,8 @@ export class TaskService {
   }
 
   async create(args: CreateTaskArgs, userId: string): Promise<Task> {
-    const { id: projectId, ...rest } = args;
     const entity: TaskEntity = {
-      ...rest,
-      projectId,
+      ...args,
       userId,
       _id: randomUUID(),
     };
