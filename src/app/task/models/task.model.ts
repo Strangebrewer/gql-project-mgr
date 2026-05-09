@@ -28,7 +28,7 @@ export class Task {
 
 @ArgsType()
 export class CreateTaskArgs {
-  projectId: string;
+  id: string;
   name: string;
   description?: string;
   @Field(() => TaskStatus, { nullable: true })

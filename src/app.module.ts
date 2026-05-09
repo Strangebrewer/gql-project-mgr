@@ -7,6 +7,8 @@ import configuration from './config/configuration';
 import { SharedModule } from './shared/shared.module';
 import { ProjectModule } from './app/project/project.module';
 import { TaskModule } from './app/task/task.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { TraceInterceptor } from './common/interceptors/trace.interceptor';
 
 @Module({
   imports: [
@@ -17,9 +19,8 @@ import { TaskModule } from './app/task/task.module';
     }),
     LoggerModule.forRoot({
       pinoHttp: {
-        transport: process.env.NODE_ENV !== 'production'
-          ? { target: 'pino-pretty' }
-          : undefined,
+        autoLogging: false,
+        transport: process.env.NODE_ENV !== 'production' ? { target: 'pino-pretty' } : undefined,
       },
     }),
     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
@@ -30,5 +31,6 @@ import { TaskModule } from './app/task/task.module';
     ProjectModule,
     TaskModule,
   ],
+  providers: [{ provide: APP_INTERCEPTOR, useClass: TraceInterceptor }],
 })
 export class AppModule {}
