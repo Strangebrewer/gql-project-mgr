@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Logger, Post, UseGuards } from '@nestjs/common';
 import { OidcGuard } from '../../common/guards/oidc.guard';
 import { TRACER_CLIENT, TracerClient } from '../../shared/tracer/tracer.module';
 import { ProjectService } from '../project/project.service';
@@ -37,9 +37,15 @@ export class PubSubController {
   async onJobCreated(@Body() body: PubSubMessage): Promise<void> {
     const start = new Date();
 
+    const logger = new Logger('pubsub.controller');
+
+    logger.log('job-created push sub activated');
+
     const payload: JobCreatedPayload = JSON.parse(
       Buffer.from(body.message.data, 'base64').toString('utf8'),
     );
+
+    logger.log('payload:::', payload);
 
     const { userId, jobTitle, companyName, traceId } = payload;
 
