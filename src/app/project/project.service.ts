@@ -25,6 +25,11 @@ export class ProjectService {
     return mapToModel(record);
   }
 
+  async findByName(userId: string, name: string): Promise<Project | null> {
+    const record = await this.projectRepository.findOne({ userId, name });
+    return record ? mapToModel(record) : null;
+  }
+
   async find(userId: string): Promise<Project[]> {
     const records = await this.projectRepository.find({ userId });
     return records.map(mapToModel);

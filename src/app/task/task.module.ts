@@ -13,5 +13,6 @@ import { TaskService } from './task.service';
     TaskResolver,
     TaskService,
   ],
+  exports: [TaskService],
 })
 export class TaskModule {}

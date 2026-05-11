@@ -13,5 +13,6 @@ import { ProjectService } from './project.service';
     ProjectResolver,
     ProjectService,
   ],
+  exports: [ProjectService],
 })
 export class ProjectModule {}

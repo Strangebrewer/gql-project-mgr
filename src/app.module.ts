@@ -9,6 +9,7 @@ import { ProjectModule } from './app/project/project.module';
 import { TaskModule } from './app/task/task.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TraceInterceptor } from './common/interceptors/trace.interceptor';
+import { PubSubModule } from './app/pubsub/pubsub.module';
 
 @Module({
   imports: [
@@ -24,7 +25,15 @@ import { TraceInterceptor } from './common/interceptors/trace.interceptor';
         stream: {
           write(msg: string) {
             const entry = JSON.parse(msg);
-            const internal = ['InstanceLoader', 'NestFactory', 'RouterExplorer', 'RoutesResolver', 'NestApplication', 'GraphQLModule', 'AppModule'];
+            const internal = [
+              'InstanceLoader',
+              'NestFactory',
+              'RouterExplorer',
+              'RoutesResolver',
+              'NestApplication',
+              'GraphQLModule',
+              'AppModule',
+            ];
             if (internal.includes(entry.context)) return;
             process.stdout.write(msg);
           },
@@ -38,6 +47,7 @@ import { TraceInterceptor } from './common/interceptors/trace.interceptor';
     SharedModule,
     ProjectModule,
     TaskModule,
+    PubSubModule,
   ],
   providers: [{ provide: APP_INTERCEPTOR, useClass: TraceInterceptor }],
 })
