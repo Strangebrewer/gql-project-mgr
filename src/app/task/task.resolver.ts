@@ -2,7 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { JwtAccessGuard, JwtUserId } from '../../common/guards/jwt-access.guard';
 import { DeleteResult } from '../../common/models/common.model';
-import { CreateTaskArgs, Task, UpdateTaskArgs } from './models/task.model';
+import { CreateTaskInput, Task, UpdateTaskInput } from './models/task.model';
 import { TaskService } from './task.service';
 
 @Resolver(() => Task)
@@ -29,18 +29,18 @@ export class TaskResolver {
   @UseGuards(JwtAccessGuard)
   async createTask(
     @JwtUserId() userId: string,
-    @Args() args: CreateTaskArgs,
+    @Args('input') input: CreateTaskInput,
   ): Promise<Task> {
-    return this.taskService.create(args, userId);
+    return this.taskService.create(input, userId);
   }
 
   @Mutation(() => Task)
   @UseGuards(JwtAccessGuard)
   async updateTask(
     @Args('id') id: string,
-    @Args() args: UpdateTaskArgs,
+    @Args('input') input: UpdateTaskInput,
   ): Promise<Task> {
-    return this.taskService.update(id, args);
+    return this.taskService.update(id, input);
   }
 
   @Mutation(() => DeleteResult)

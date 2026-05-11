@@ -2,7 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { JwtAccessGuard, JwtUserId } from '../../common/guards/jwt-access.guard';
 import { DeleteResult } from '../../common/models/common.model';
-import { CreateProjectArgs, Project, UpdateProjectArgs } from './models/project.model';
+import { CreateProjectInput, Project, UpdateProjectInput } from './models/project.model';
 import { ProjectService } from './project.service';
 
 @Resolver(() => Project)
@@ -29,18 +29,18 @@ export class ProjectResolver {
   @UseGuards(JwtAccessGuard)
   async createProject(
     @JwtUserId() userId: string,
-    @Args() args: CreateProjectArgs,
+    @Args('input') input: CreateProjectInput,
   ): Promise<Project> {
-    return this.projectService.create(args, userId);
+    return this.projectService.create(input, userId);
   }
 
   @Mutation(() => Project)
   @UseGuards(JwtAccessGuard)
   async updateProject(
     @Args('id') id: string,
-    @Args() args: UpdateProjectArgs,
+    @Args('input') input: UpdateProjectInput,
   ): Promise<Project> {
-    return this.projectService.update(id, args);
+    return this.projectService.update(id, input);
   }
 
   @Mutation(() => DeleteResult)

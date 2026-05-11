@@ -1,4 +1,4 @@
-import { ArgsType, Directive, Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Directive, Field, InputType, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 export enum ProjectStatus {
   NOT_STARTED = 'NOT_STARTED',
@@ -26,8 +26,8 @@ export class Project {
   dueDate?: string;
 }
 
-@ArgsType()
-export class CreateProjectArgs {
+@InputType()
+export class CreateProjectInput {
   name: string;
   description?: string;
   @Field(() => ProjectStatus, { nullable: true })
@@ -35,8 +35,8 @@ export class CreateProjectArgs {
   dueDate?: string;
 }
 
-@ArgsType()
-export class UpdateProjectArgs {
+@InputType()
+export class UpdateProjectInput {
   name?: string;
   description?: string;
   @Field(() => ProjectStatus, { nullable: true })

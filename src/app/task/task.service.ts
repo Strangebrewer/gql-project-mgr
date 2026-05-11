@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 import { Injectable } from '@nestjs/common';
 import { DeleteResult } from '../../common/models/common.model';
 import { TaskEntity } from './models/task.entity';
-import { CreateTaskArgs, Task, TaskStatus, UpdateTaskArgs } from './models/task.model';
+import { CreateTaskInput, Task, TaskStatus, UpdateTaskInput } from './models/task.model';
 import { TaskRepository } from './task.repository';
 import { NotFoundError } from '../../common/errors';
 
@@ -25,7 +25,7 @@ export class TaskService {
     return records.map(mapToModel);
   }
 
-  async create(args: CreateTaskArgs, userId: string): Promise<Task> {
+  async create(args: CreateTaskInput, userId: string): Promise<Task> {
     const entity: TaskEntity = {
       ...args,
       userId,
@@ -35,7 +35,7 @@ export class TaskService {
     return mapToModel(record);
   }
 
-  async update(id: string, args: UpdateTaskArgs): Promise<Task> {
+  async update(id: string, args: UpdateTaskInput): Promise<Task> {
     const record = await this.taskRepository.findOneAndUpdate(id, args);
     if (!record) {
       throw new NotFoundError('Task');

@@ -3,10 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { DeleteResult } from '../../common/models/common.model';
 import { ProjectEntity } from './models/project.entity';
 import {
-  CreateProjectArgs,
+  CreateProjectInput,
   Project,
   ProjectStatus,
-  UpdateProjectArgs,
+  UpdateProjectInput,
 } from './models/project.model';
 import { ProjectRepository } from './project.repository';
 import { NotFoundError } from '../../common/errors';
@@ -30,7 +30,7 @@ export class ProjectService {
     return records.map(mapToModel);
   }
 
-  async create(args: CreateProjectArgs, userId: string): Promise<Project> {
+  async create(args: CreateProjectInput, userId: string): Promise<Project> {
     const entity: ProjectEntity = {
       ...args,
       userId,
@@ -40,7 +40,7 @@ export class ProjectService {
     return mapToModel(record);
   }
 
-  async update(id: string, args: UpdateProjectArgs): Promise<Project> {
+  async update(id: string, args: UpdateProjectInput): Promise<Project> {
     const record = await this.projectRepository.findOneAndUpdate(id, args);
     if (!record) {
       throw new NotFoundError('Project');

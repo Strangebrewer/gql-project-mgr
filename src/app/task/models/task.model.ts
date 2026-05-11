@@ -1,4 +1,4 @@
-import { ArgsType, Directive, Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Directive, Field, InputType, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 export enum TaskStatus {
   TODO = 'TODO',
@@ -26,8 +26,8 @@ export class Task {
   dueDate?: string;
 }
 
-@ArgsType()
-export class CreateTaskArgs {
+@InputType()
+export class CreateTaskInput {
   projectId: string;
   name: string;
   description?: string;
@@ -36,8 +36,8 @@ export class CreateTaskArgs {
   dueDate?: string;
 }
 
-@ArgsType()
-export class UpdateTaskArgs {
+@InputType()
+export class UpdateTaskInput {
   name?: string;
   description?: string;
   @Field(() => TaskStatus, { nullable: true })
