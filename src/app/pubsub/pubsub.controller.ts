@@ -29,6 +29,7 @@ export class PubSubController {
   constructor(
     private readonly projectService: ProjectService,
     private readonly taskService: TaskService,
+    private readonly logger = new Logger('pubsub.controller'),
     @Inject(TRACER_CLIENT) private readonly tracer: TracerClient,
   ) {}
 
@@ -37,15 +38,13 @@ export class PubSubController {
   async onJobCreated(@Body() body: PubSubMessage): Promise<void> {
     const start = new Date();
 
-    const logger = new Logger('pubsub.controller');
-
-    logger.log('job-created push sub activated');
+    this.logger.log('job-created push sub activated');
 
     const payload: JobPayload = JSON.parse(
       Buffer.from(body.message.data, 'base64').toString('utf8'),
     );
 
-    logger.log('payload:::', payload);
+    this.logger.log('payload:::', payload);
 
     const { userId, jobTitle, companyName, traceId } = payload;
 
@@ -67,9 +66,13 @@ export class PubSubController {
   async onInterviewScheduled(@Body() body: PubSubMessage): Promise<void> {
     const start = new Date();
 
+    this.logger.log('job-interview-scheduled push sub activated');
+
     const payload: JobPayload = JSON.parse(
       Buffer.from(body.message.data, 'base64').toString('utf8'),
     );
+
+    this.logger.log('payload:::', payload);
 
     const { userId, jobTitle, companyName, traceId } = payload;
 
