@@ -14,7 +14,7 @@ type PubSubMessage = {
   subscription: string;
 };
 
-type JobCreatedPayload = {
+type JobPayload = {
   userId: string;
   jobId: string;
   jobTitle: string;
@@ -41,7 +41,7 @@ export class PubSubController {
 
     logger.log('job-created push sub activated');
 
-    const payload: JobCreatedPayload = JSON.parse(
+    const payload: JobPayload = JSON.parse(
       Buffer.from(body.message.data, 'base64').toString('utf8'),
     );
 
@@ -60,5 +60,33 @@ export class PubSubController {
     );
 
     this.tracer.sendSpan(traceId, 'POST /pubsub/job-created', start, new Date());
+  }
+
+  @Post('job-interview-scheduled')
+  @UseGuards(OidcGuard)
+  async onInterviewScheduled(@Body() body: PubSubMessage): Promise<void> {
+    const start = new Date();
+
+    const payload: JobPayload = JSON.parse(
+      Buffer.from(body.message.data, 'base64').toString('utf8'),
+    );
+
+    const { userId, jobTitle, companyName, traceId } = payload;
+
+    let project = await this.projectService.findByName(userId, JOB_SEARCH_PROJECT);
+    if (!project) {
+      project = await this.projectService.create({ name: JOB_SEARCH_PROJECT }, userId);
+    }
+
+    await this.taskService.create(
+      {
+        projectId: project.id,
+        name: `Prep for interview: ${jobTitle} at ${companyName}`,
+        status: TaskStatus.TODO,
+      },
+      userId,
+    );
+
+    this.tracer.sendSpan(traceId, 'POST /pubsub/job-interview-scheduled', start, new Date());
   }
 }
