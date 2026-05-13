@@ -26,12 +26,14 @@ const JOB_SEARCH_PROJECT = 'Job Search';
 
 @Controller('pubsub')
 export class PubSubController {
+  private logger: Logger;
   constructor(
     private readonly projectService: ProjectService,
     private readonly taskService: TaskService,
-    private readonly logger = new Logger('pubsub.controller'),
     @Inject(TRACER_CLIENT) private readonly tracer: TracerClient,
-  ) {}
+  ) {
+    this.logger = new Logger('pubsub.controller');
+  }
 
   @Post('job-created')
   @UseGuards(OidcGuard)
