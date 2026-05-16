@@ -22,6 +22,13 @@ type JobPayload = {
   traceId: string;
 };
 
+type OwidPayload = {
+  userId: string;
+  link: string;
+  title: string;
+  traceId: string;
+};
+
 const JOB_SEARCH_PROJECT = 'Job Search';
 
 @Controller('pubsub')
@@ -93,5 +100,34 @@ export class PubSubController {
     );
 
     this.tracer.sendSpan(traceId, 'POST /pubsub/job-interview-scheduled', start, new Date());
+  }
+
+  @Post('rube-owid')
+  @UseGuards(OidcGuard)
+  async onRubeOwid(@Body() body: PubSubMessage): Promise<void> {
+    const start = new Date();
+
+    const payload: OwidPayload = JSON.parse(
+      Buffer.from(body.message.data, 'base64').toString('utf8'),
+    );
+
+    const { userId, title, link, traceId } = payload;
+
+    let project = await this.projectService.findByName(userId, 'Interesting Topics');
+    if (!project) {
+      project = await this.projectService.create({ name: 'Interesting Topics' }, userId);
+    }
+
+    await this.taskService.create(
+      {
+        projectId: project.id,
+        name: `Check out '${title}' on OWID`,
+        description: link,
+        status: TaskStatus.TODO,
+      },
+      userId,
+    );
+
+    this.tracer.sendSpan(traceId, 'POST /pubsub/rube-owid', start, new Date());
   }
 }
