@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { DeleteResult } from '../../common/models/common.model';
 import { TaskEntity } from './models/task.entity';
 import { CreateTaskInput, Task, TaskStatus, UpdateTaskInput } from './models/task.model';
@@ -25,11 +25,16 @@ export class TaskService {
     return records.map(mapToModel);
   }
 
-  async create(args: CreateTaskInput, userId: string): Promise<Task> {
+  async create(args: CreateTaskInput, userId: string, options?: { isDemo?: boolean; expiresAt?: Date }): Promise<Task> {
+    if (options?.isDemo) {
+      const count = await this.taskRepository.count({ projectId: args.projectId });
+      if (count >= 50) throw new ForbiddenException('demo task limit reached');
+    }
     const entity: TaskEntity = {
       ...args,
       userId,
       _id: randomUUID(),
+      ...(options?.expiresAt && { expiresAt: options.expiresAt }),
     };
     const record = await this.taskRepository.create(entity);
     return mapToModel(record);

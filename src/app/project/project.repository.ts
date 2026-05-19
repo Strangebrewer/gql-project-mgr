@@ -37,6 +37,10 @@ export class ProjectRepository {
     );
   }
 
+  async count(filter: Partial<ProjectEntity>): Promise<number> {
+    return this.collection.countDocuments(filter);
+  }
+
   async deleteOne(id: string) {
     return this.collection.deleteOne({ [this.primaryKey]: id } as Filter<ProjectEntity>);
   }

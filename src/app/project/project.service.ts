@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { DeleteResult } from '../../common/models/common.model';
 import { ProjectEntity } from './models/project.entity';
 import {
@@ -35,11 +35,16 @@ export class ProjectService {
     return records.map(mapToModel);
   }
 
-  async create(args: CreateProjectInput, userId: string): Promise<Project> {
+  async create(args: CreateProjectInput, userId: string, options?: { isDemo?: boolean; expiresAt?: Date }): Promise<Project> {
+    if (options?.isDemo) {
+      const count = await this.projectRepository.count({ userId });
+      if (count >= 4) throw new ForbiddenException('demo project limit reached');
+    }
     const entity: ProjectEntity = {
       ...args,
       userId,
       _id: randomUUID(),
+      ...(options?.expiresAt && { expiresAt: options.expiresAt }),
     };
     const record = await this.projectRepository.create(entity);
     return mapToModel(record);

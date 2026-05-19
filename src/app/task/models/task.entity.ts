@@ -6,4 +6,5 @@ export type TaskEntity = {
   description?: string;
   status?: string;
   dueDate?: string;
+  expiresAt?: Date;
 };

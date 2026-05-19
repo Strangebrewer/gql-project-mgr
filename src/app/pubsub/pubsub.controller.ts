@@ -1,6 +1,7 @@
 import { Body, Controller, Inject, Logger, Post, UseGuards } from '@nestjs/common';
 import { OidcGuard } from '../../common/guards/oidc.guard';
 import { TRACER_CLIENT, TracerClient } from '../../shared/tracer/tracer.module';
+import { DemoService } from '../demo/demo.service';
 import { ProjectService } from '../project/project.service';
 import { TaskService } from '../task/task.service';
 import { TaskStatus } from '../task/models/task.model';
@@ -29,6 +30,12 @@ type OwidPayload = {
   traceId: string;
 };
 
+type DemoRegisteredPayload = {
+  userId: string;
+  expiresAt: string;
+  traceId?: string;
+};
+
 const JOB_SEARCH_PROJECT = 'Job Search';
 
 @Controller('pubsub')
@@ -37,6 +44,7 @@ export class PubSubController {
   constructor(
     private readonly projectService: ProjectService,
     private readonly taskService: TaskService,
+    private readonly demoService: DemoService,
     @Inject(TRACER_CLIENT) private readonly tracer: TracerClient,
   ) {
     this.logger = new Logger('pubsub.controller');
@@ -100,6 +108,26 @@ export class PubSubController {
     );
 
     this.tracer.sendSpan(traceId, 'POST /pubsub/job-interview-scheduled', start, new Date());
+  }
+
+  @Post('demo-registered')
+  @UseGuards(OidcGuard)
+  async onDemoRegistered(@Body() body: PubSubMessage): Promise<void> {
+    let payload: DemoRegisteredPayload;
+    try {
+      payload = JSON.parse(Buffer.from(body.message.data, 'base64').toString('utf8'));
+    } catch (err) {
+      this.logger.error('failed to decode demo-registered payload', err);
+      return;
+    }
+    const start = new Date();
+    try {
+      await this.demoService.seedDemoData(payload.userId, new Date(payload.expiresAt));
+      this.tracer.sendSpan(payload.traceId, 'demo seed', start, new Date());
+    } catch (err) {
+      this.logger.error('failed to seed demo data', { userId: payload.userId, err });
+      this.tracer.sendErrorSpan(payload.traceId, 'demo seed', String(err), start, new Date());
+    }
   }
 
   @Post('rube-owid')

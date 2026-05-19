@@ -1,6 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { JwtAccessGuard, JwtUserId } from '../../common/guards/jwt-access.guard';
+import { IsDemo, JwtAccessGuard, JwtUserId } from '../../common/guards/jwt-access.guard';
 import { DeleteResult } from '../../common/models/common.model';
 import { CreateTaskInput, Task, UpdateTaskInput } from './models/task.model';
 import { TaskService } from './task.service';
@@ -29,9 +29,10 @@ export class TaskResolver {
   @UseGuards(JwtAccessGuard)
   async createTask(
     @JwtUserId() userId: string,
+    @IsDemo() isDemo: boolean,
     @Args('input') input: CreateTaskInput,
   ): Promise<Task> {
-    return this.taskService.create(input, userId);
+    return this.taskService.create(input, userId, { isDemo });
   }
 
   @Mutation(() => Task)

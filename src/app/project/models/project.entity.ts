@@ -5,4 +5,5 @@ export type ProjectEntity = {
   description?: string;
   status?: string;
   dueDate?: string;
+  expiresAt?: Date;
 };

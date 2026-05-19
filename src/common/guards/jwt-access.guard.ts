@@ -22,6 +22,7 @@ export class JwtAccessGuard implements CanActivate {
     try {
       const verified = this.jwtService.verify(token);
       request.userId = verified.sub;
+      request.isDemo = verified.isDemo ?? false;
       return true;
     } catch {
       throw new UnauthorizedException();
@@ -33,5 +34,12 @@ export const JwtUserId = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext) => {
     const request = GqlExecutionContext.create(ctx).getContext().req;
     return request.userId;
+  },
+);
+
+export const IsDemo = createParamDecorator(
+  (_data: unknown, ctx: ExecutionContext) => {
+    const request = GqlExecutionContext.create(ctx).getContext().req;
+    return request.isDemo ?? false;
   },
 );
