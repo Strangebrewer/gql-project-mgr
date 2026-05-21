@@ -21,6 +21,7 @@ type JobPayload = {
   jobTitle: string;
   companyName: string;
   traceId: string;
+  expiresAt?: string;
 };
 
 type OwidPayload = {
@@ -28,6 +29,7 @@ type OwidPayload = {
   link: string;
   title: string;
   traceId: string;
+  expiresAt?: string;
 };
 
 type DemoRegisteredPayload = {
@@ -63,16 +65,18 @@ export class PubSubController {
 
     this.logger.log('payload:::', payload);
 
-    const { userId, jobTitle, companyName, traceId } = payload;
+    const { userId, jobTitle, companyName, traceId, expiresAt: expiresAtStr } = payload;
+    const expiresAt = expiresAtStr ? new Date(expiresAtStr) : undefined;
 
     let project = await this.projectService.findByName(userId, JOB_SEARCH_PROJECT);
     if (!project) {
-      project = await this.projectService.create({ name: JOB_SEARCH_PROJECT }, userId);
+      project = await this.projectService.create({ name: JOB_SEARCH_PROJECT }, userId, { expiresAt });
     }
 
     await this.taskService.create(
       { projectId: project.id, name: `${jobTitle} at ${companyName}`, status: TaskStatus.TODO },
       userId,
+      { expiresAt },
     );
 
     this.tracer.sendSpan(traceId, 'POST /pubsub/job-created', start, new Date());
@@ -89,13 +93,12 @@ export class PubSubController {
       Buffer.from(body.message.data, 'base64').toString('utf8'),
     );
 
-    this.logger.log('payload:::', payload);
-
-    const { userId, jobTitle, companyName, traceId } = payload;
+    const { userId, jobTitle, companyName, traceId, expiresAt: expiresAtStr } = payload;
+    const expiresAt = expiresAtStr ? new Date(expiresAtStr) : undefined;
 
     let project = await this.projectService.findByName(userId, JOB_SEARCH_PROJECT);
     if (!project) {
-      project = await this.projectService.create({ name: JOB_SEARCH_PROJECT }, userId);
+      project = await this.projectService.create({ name: JOB_SEARCH_PROJECT }, userId, { expiresAt });
     }
 
     await this.taskService.create(
@@ -105,6 +108,7 @@ export class PubSubController {
         status: TaskStatus.TODO,
       },
       userId,
+      { expiresAt },
     );
 
     this.tracer.sendSpan(traceId, 'POST /pubsub/job-interview-scheduled', start, new Date());
@@ -139,11 +143,12 @@ export class PubSubController {
       Buffer.from(body.message.data, 'base64').toString('utf8'),
     );
 
-    const { userId, title, link, traceId } = payload;
+    const { userId, title, link, traceId, expiresAt: expiresAtStr } = payload;
+    const expiresAt = expiresAtStr ? new Date(expiresAtStr) : undefined;
 
     let project = await this.projectService.findByName(userId, 'Interesting Topics');
     if (!project) {
-      project = await this.projectService.create({ name: 'Interesting Topics' }, userId);
+      project = await this.projectService.create({ name: 'Interesting Topics' }, userId, { expiresAt });
     }
 
     await this.taskService.create(
@@ -154,6 +159,7 @@ export class PubSubController {
         status: TaskStatus.TODO,
       },
       userId,
+      { expiresAt },
     );
 
     this.tracer.sendSpan(traceId, 'POST /pubsub/rube-owid', start, new Date());
