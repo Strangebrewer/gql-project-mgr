@@ -6,6 +6,7 @@ export type DatabaseConfig = {
   name: string;
   collections: {
     project: string;
+    task: string;
   };
 };
 
@@ -14,8 +15,9 @@ export default (): DatabaseConfig => ({
   username: process.env.DB_USERNAME || '',
   password: process.env.DB_PASSWORD || '',
   cluster: process.env.DB_CLUSTER || '',
-  name: process.env.DB_NAME || '',
+  name: process.env.DB_NAME || 'project_mgr',
   collections: {
-    project: process.env.PROJECT_COLLECTION || 'projects',
+    project: process.env.PROJECTS_COLLECTION || 'projects',
+    task: process.env.TASKS_COLLECTION || 'tasks',
   },
 });

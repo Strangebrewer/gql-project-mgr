@@ -1,43 +1,47 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Collection, Filter, FindOptions, ReturnDocument, UpdateFilter } from 'mongodb';
-import { PROJECT_COLLECTION } from './project.factory';
-import { ProjectEntity, ProjectEntityRead } from './project.entity';
+import { PROJECT_COLLECTION } from '../../common/factory/project.factory';
+import { ProjectEntity } from './models/project.entity';
 
 @Injectable()
 export class ProjectRepository {
-  private readonly primaryKey = 'id';
+  private readonly primaryKey = '_id';
 
   constructor(
     @Inject(PROJECT_COLLECTION)
-    private readonly collection: Collection<ProjectEntityRead>,
+    private readonly collection: Collection<ProjectEntity>,
   ) {}
 
-  async findOne(filter: Filter<ProjectEntityRead>, options?: FindOptions): Promise<ProjectEntityRead> {
+  async findOne(filter: Filter<ProjectEntity>, options?: FindOptions): Promise<ProjectEntity> {
     return this.collection.findOne(filter, options);
   }
 
-  async findById(id: string, options?: FindOptions): Promise<ProjectEntityRead> {
-    return this.collection.findOne({ [this.primaryKey]: id } as Filter<ProjectEntityRead>, options);
+  async findById(id: string, options?: FindOptions): Promise<ProjectEntity> {
+    return this.collection.findOne({ [this.primaryKey]: id } as Filter<ProjectEntity>, options);
   }
 
-  async find(filter: Filter<ProjectEntityRead>, options?: FindOptions): Promise<ProjectEntityRead[]> {
+  async find(filter: Filter<ProjectEntity>, options?: FindOptions): Promise<ProjectEntity[]> {
     return this.collection.find(filter, options).toArray();
   }
 
-  async create(entity: ProjectEntity): Promise<ProjectEntityRead> {
-    const result = await this.collection.insertOne(entity as ProjectEntityRead);
-    return { _id: result.insertedId.toString(), ...entity };
+  async create(entity: ProjectEntity): Promise<ProjectEntity> {
+    await this.collection.insertOne(entity);
+    return entity;
   }
 
-  async findOneAndUpdate(id: string, fields: UpdateFilter<ProjectEntity>): Promise<ProjectEntityRead> {
+  async findOneAndUpdate(id: string, fields: UpdateFilter<ProjectEntity>): Promise<ProjectEntity> {
     return this.collection.findOneAndUpdate(
-      { [this.primaryKey]: id } as Filter<ProjectEntityRead>,
+      { [this.primaryKey]: id } as Filter<ProjectEntity>,
       { $set: fields },
       { returnDocument: ReturnDocument.AFTER },
     );
   }
 
+  async count(filter: Partial<ProjectEntity>): Promise<number> {
+    return this.collection.countDocuments(filter);
+  }
+
   async deleteOne(id: string) {
-    return this.collection.deleteOne({ [this.primaryKey]: id } as Filter<ProjectEntityRead>);
+    return this.collection.deleteOne({ [this.primaryKey]: id } as Filter<ProjectEntity>);
   }
 }

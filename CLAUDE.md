@@ -8,9 +8,25 @@ Created from `gql-subgraph-template`. All patterns, structure, and tooling are i
 
 ---
 
-## Known Domains
+## Domains
 
-TBD.
+### `projects`
+Project tracking — name, description, status, dates, etc.
+
+| Detail | Value |
+|---|---|
+| ID prefix | `PRJ-` |
+| Collection env var | `PROJECTS_COLLECTION` |
+| Collection default | `projects` |
+
+### `tasks`
+Tasks always belong to a project (`projectId` required). Separate domain and collection — not embedded in project documents — so tasks can be queried independently (e.g. all tasks due this week across projects).
+
+| Detail | Value |
+|---|---|
+| ID prefix | `TSK-` |
+| Collection env var | `TASKS_COLLECTION` |
+| Collection default | `tasks` |
 
 ---
 
@@ -19,4 +35,4 @@ TBD.
 - Created from `gql-subgraph-template` via GitHub template
 - `package.json` name updated to `gql-project-mgr`
 - No domain code written yet — `example/` domain from template is still in place as reference
-- **Next**: write CLAUDE.md and README, then define domains
+- **Next**: build `projects` domain, then `tasks` domain; remove `example/` once both are working
