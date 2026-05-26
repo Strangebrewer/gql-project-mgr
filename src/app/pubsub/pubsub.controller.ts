@@ -52,36 +52,6 @@ export class PubSubController {
     this.logger = new Logger('pubsub.controller');
   }
 
-  @Post('job-created')
-  @UseGuards(OidcGuard)
-  async onJobCreated(@Body() body: PubSubMessage): Promise<void> {
-    const start = new Date();
-
-    this.logger.log('job-created push sub activated');
-
-    const payload: JobPayload = JSON.parse(
-      Buffer.from(body.message.data, 'base64').toString('utf8'),
-    );
-
-    this.logger.log('payload:::', payload);
-
-    const { userId, jobTitle, companyName, traceId, expiresAt: expiresAtStr } = payload;
-    const expiresAt = expiresAtStr ? new Date(expiresAtStr) : undefined;
-
-    let project = await this.projectService.findByName(userId, JOB_SEARCH_PROJECT);
-    if (!project) {
-      project = await this.projectService.create({ name: JOB_SEARCH_PROJECT }, userId, { expiresAt });
-    }
-
-    await this.taskService.create(
-      { projectId: project.id, name: `${jobTitle} at ${companyName}`, status: TaskStatus.TODO },
-      userId,
-      { expiresAt },
-    );
-
-    this.tracer.sendSpan(traceId, 'POST /pubsub/job-created', start, new Date());
-  }
-
   @Post('job-interview-scheduled')
   @UseGuards(OidcGuard)
   async onInterviewScheduled(@Body() body: PubSubMessage): Promise<void> {
@@ -98,7 +68,9 @@ export class PubSubController {
 
     let project = await this.projectService.findByName(userId, JOB_SEARCH_PROJECT);
     if (!project) {
-      project = await this.projectService.create({ name: JOB_SEARCH_PROJECT }, userId, { expiresAt });
+      project = await this.projectService.create({ name: JOB_SEARCH_PROJECT }, userId, {
+        expiresAt,
+      });
     }
 
     await this.taskService.create(
@@ -148,7 +120,9 @@ export class PubSubController {
 
     let project = await this.projectService.findByName(userId, 'Interesting Topics');
     if (!project) {
-      project = await this.projectService.create({ name: 'Interesting Topics' }, userId, { expiresAt });
+      project = await this.projectService.create({ name: 'Interesting Topics' }, userId, {
+        expiresAt,
+      });
     }
 
     await this.taskService.create(
