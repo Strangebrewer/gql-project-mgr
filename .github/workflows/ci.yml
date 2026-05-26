@@ -112,6 +112,6 @@ jobs:
             --platform managed \
             --max-instances 2 \
             --service-account ${{ env.SERVICE_ACCOUNT }} \
-            --set-secrets MONGO_URI=db-url-project-mgr:latest,JWT_PUBLIC_KEY=jwt-public-key:latest \
-            --set-env-vars DB_NAME=${{ vars.DB_NAME }},PUBSUB_SERVICE_ACCOUNT_EMAIL=${{ vars.PUBSUB_SERVICE_ACCOUNT_EMAIL }},PUBSUB_AUDIENCE=${{ vars.PUBSUB_AUDIENCE }} \
+            --set-secrets MONGO_URI=db-url-project-mgr:latest,JWT_PUBLIC_KEY=jwt-public-key:latest,TRACER_SERVICE_KEY=tracer-service-key:latest \
+            --set-env-vars DB_NAME=${{ vars.DB_NAME }},TRACER_SERVICE_URL=${{ vars.TRACER_SERVICE_URL }},PUBSUB_SERVICE_ACCOUNT_EMAIL=${{ vars.PUBSUB_SERVICE_ACCOUNT_EMAIL }},PUBSUB_AUDIENCE=${{ vars.PUBSUB_AUDIENCE }},PUBSUB_PROJECT_ID=${{ vars.PUBSUB_PROJECT_ID }} \
             --allow-unauthenticated
