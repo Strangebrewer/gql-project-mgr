@@ -7,12 +7,7 @@ import { TaskService } from './task.service';
 
 @Module({
   imports: [SharedModule],
-  providers: [
-    TaskCollectionFactory,
-    TaskRepository,
-    TaskResolver,
-    TaskService,
-  ],
+  providers: [TaskCollectionFactory, TaskRepository, TaskResolver, TaskService],
   exports: [TaskService],
 })
 export class TaskModule {}

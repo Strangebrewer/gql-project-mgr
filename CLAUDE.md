@@ -11,22 +11,24 @@ Created from `gql-subgraph-template`. All patterns, structure, and tooling are i
 ## Domains
 
 ### `projects`
+
 Project tracking — name, description, status, dates, etc.
 
-| Detail | Value |
-|---|---|
-| ID prefix | `PRJ-` |
+| Detail             | Value                 |
+| ------------------ | --------------------- |
+| ID prefix          | `PRJ-`                |
 | Collection env var | `PROJECTS_COLLECTION` |
-| Collection default | `projects` |
+| Collection default | `projects`            |
 
 ### `tasks`
+
 Tasks always belong to a project (`projectId` required). Separate domain and collection — not embedded in project documents — so tasks can be queried independently (e.g. all tasks due this week across projects).
 
-| Detail | Value |
-|---|---|
-| ID prefix | `TSK-` |
+| Detail             | Value              |
+| ------------------ | ------------------ |
+| ID prefix          | `TSK-`             |
 | Collection env var | `TASKS_COLLECTION` |
-| Collection default | `tasks` |
+| Collection default | `tasks`            |
 
 ---
 

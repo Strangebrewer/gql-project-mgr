@@ -13,9 +13,7 @@ import { NotFoundError } from '../../common/errors';
 
 @Injectable()
 export class ProjectService {
-  constructor(
-    private readonly projectRepository: ProjectRepository,
-  ) {}
+  constructor(private readonly projectRepository: ProjectRepository) {}
 
   async findById(id: string): Promise<Project> {
     const record = await this.projectRepository.findById(id);
@@ -35,7 +33,11 @@ export class ProjectService {
     return records.map(mapToModel);
   }
 
-  async create(args: CreateProjectInput, userId: string, options?: { isDemo?: boolean; expiresAt?: Date }): Promise<Project> {
+  async create(
+    args: CreateProjectInput,
+    userId: string,
+    options?: { isDemo?: boolean; expiresAt?: Date },
+  ): Promise<Project> {
     if (options?.isDemo) {
       const count = await this.projectRepository.count({ userId });
       if (count >= 4) throw new ForbiddenException('demo project limit reached');

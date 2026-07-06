@@ -1,10 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  NestInterceptor,
-  ExecutionContext,
-  CallHandler,
-} from '@nestjs/common';
+import { Inject, Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { TRACER_CLIENT, TracerClient } from '../../shared/tracer/tracer.module';

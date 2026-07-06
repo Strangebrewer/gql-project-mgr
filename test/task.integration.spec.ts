@@ -65,7 +65,10 @@ describe('Task (integration)', () => {
   });
 
   it('creates a task with only required fields', async () => {
-    const created = await service.create({ projectId: 'project-abc', name: 'Minimal task' }, 'user-1');
+    const created = await service.create(
+      { projectId: 'project-abc', name: 'Minimal task' },
+      'user-1',
+    );
 
     expect(created.id).toBeDefined();
     expect(created.name).toBe('Minimal task');

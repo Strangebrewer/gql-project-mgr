@@ -11,17 +11,13 @@ export class TaskResolver {
 
   @Query(() => Task)
   @UseGuards(JwtAccessGuard)
-  async getTask(
-    @Args('id') id: string,
-  ): Promise<Task> {
+  async getTask(@Args('id') id: string): Promise<Task> {
     return this.taskService.findById(id);
   }
 
   @Query(() => [Task])
   @UseGuards(JwtAccessGuard)
-  async getTasksByProject(
-    @Args('id') id: string,
-  ): Promise<Task[]> {
+  async getTasksByProject(@Args('id') id: string): Promise<Task[]> {
     return this.taskService.findByProject(id);
   }
 
@@ -37,18 +33,13 @@ export class TaskResolver {
 
   @Mutation(() => Task)
   @UseGuards(JwtAccessGuard)
-  async updateTask(
-    @Args('id') id: string,
-    @Args('input') input: UpdateTaskInput,
-  ): Promise<Task> {
+  async updateTask(@Args('id') id: string, @Args('input') input: UpdateTaskInput): Promise<Task> {
     return this.taskService.update(id, input);
   }
 
   @Mutation(() => DeleteResult)
   @UseGuards(JwtAccessGuard)
-  async deleteTask(
-    @Args('id') id: string,
-  ): Promise<DeleteResult> {
+  async deleteTask(@Args('id') id: string): Promise<DeleteResult> {
     return this.taskService.delete(id);
   }
 }

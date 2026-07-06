@@ -11,17 +11,13 @@ export class ProjectResolver {
 
   @Query(() => Project)
   @UseGuards(JwtAccessGuard)
-  async getProject(
-    @Args('id') id: string,
-  ): Promise<Project> {
+  async getProject(@Args('id') id: string): Promise<Project> {
     return this.projectService.findById(id);
   }
 
   @Query(() => [Project])
   @UseGuards(JwtAccessGuard)
-  async getProjects(
-    @JwtUserId() userId: string,
-  ): Promise<Project[]> {
+  async getProjects(@JwtUserId() userId: string): Promise<Project[]> {
     return this.projectService.find(userId);
   }
 
@@ -46,9 +42,7 @@ export class ProjectResolver {
 
   @Mutation(() => DeleteResult)
   @UseGuards(JwtAccessGuard)
-  async deleteProject(
-    @Args('id') id: string,
-  ): Promise<DeleteResult> {
+  async deleteProject(@Args('id') id: string): Promise<DeleteResult> {
     return this.projectService.delete(id);
   }
 }

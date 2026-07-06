@@ -7,12 +7,7 @@ import { ProjectService } from './project.service';
 
 @Module({
   imports: [SharedModule],
-  providers: [
-    ProjectCollectionFactory,
-    ProjectRepository,
-    ProjectResolver,
-    ProjectService,
-  ],
+  providers: [ProjectCollectionFactory, ProjectRepository, ProjectResolver, ProjectService],
   exports: [ProjectService],
 })
 export class ProjectModule {}

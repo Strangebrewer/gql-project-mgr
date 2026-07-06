@@ -8,9 +8,7 @@ import { NotFoundError } from '../../common/errors';
 
 @Injectable()
 export class TaskService {
-  constructor(
-    private readonly taskRepository: TaskRepository,
-  ) {}
+  constructor(private readonly taskRepository: TaskRepository) {}
 
   async findById(id: string): Promise<Task> {
     const record = await this.taskRepository.findById(id);
@@ -25,7 +23,11 @@ export class TaskService {
     return records.map(mapToModel);
   }
 
-  async create(args: CreateTaskInput, userId: string, options?: { isDemo?: boolean; expiresAt?: Date }): Promise<Task> {
+  async create(
+    args: CreateTaskInput,
+    userId: string,
+    options?: { isDemo?: boolean; expiresAt?: Date },
+  ): Promise<Task> {
     if (options?.isDemo) {
       const count = await this.taskRepository.count({ projectId: args.projectId });
       if (count >= 50) throw new ForbiddenException('demo task limit reached');

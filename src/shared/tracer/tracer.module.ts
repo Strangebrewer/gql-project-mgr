@@ -17,13 +17,7 @@ type Span = {
 
 export type TracerClient = {
   send: (span: Span) => void;
-  sendSpan: (
-    traceId: string,
-    operation: string,
-    start: Date,
-    end: Date,
-    count?: number,
-  ) => void;
+  sendSpan: (traceId: string, operation: string, start: Date, end: Date, count?: number) => void;
   sendErrorSpan: (
     traceId: string,
     operation: string,
